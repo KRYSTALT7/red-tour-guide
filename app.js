@@ -88,26 +88,17 @@ function openQR(id=currentSpot.id){
   openModal("扫码听故事", `
     <p>点位：<b>${spot.name}</b></p>
     <p>扫码后将打开对应点位详情页，展示 AI 数字人讲解、故事文本和一键导航。</p>
-   <div class="qr-wrap"><div id="qrCanvas" class="qr-canvas"></div><p style="word-break:break-all">${url}</p></div>
+  <div class="qr-wrap">
+  <img 
+    class="qr-img"
+    src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(url)}"
+    alt="扫码听故事二维码"
+  />
+  <p style="word-break:break-all">${url}</p>
+</div>
     <div class="btn-row"><button class="btn btn-primary" onclick="window.open('${url}','_blank')">打开点位页面</button></div>
   `);
-  setTimeout(() => {
-  const qrBox = document.getElementById("qrCanvas");
-
-  if (window.QRCode && qrBox) {
-    qrBox.innerHTML = "";
-    new QRCode(qrBox, {
-      text: url,
-      width: 210,
-      height: 210,
-      colorDark: "#1f1a17",
-      colorLight: "#ffffff",
-      correctLevel: QRCode.CorrectLevel.H
-    });
-  } else if (qrBox) {
-    qrBox.outerHTML = "<p>二维码库加载失败，请直接使用下方链接。</p>";
-  }
-}, 50);
+  
 }
 
 function openNavigation(id=currentSpot.id){
