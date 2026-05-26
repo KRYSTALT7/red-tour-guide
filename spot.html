@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>扫码听故事 - 红土客韵・数字陆河</title>
+  <link rel="stylesheet" href="./css/style.css"/>
+</head>
+<body>
+  <main class="spot-page">
+    <section class="spot-card">
+      <div class="spot-hero">
+        <div class="tag">扫码听故事 · AI 数字讲解</div>
+        <h1 id="spotName">点位加载中</h1>
+        <p id="spotIntro"></p>
+        <div class="tags" id="spotTags"></div>
+        <div class="spot-actions">
+          <button class="btn btn-primary" onclick="playNarration()">播放语音讲解</button>
+          <button class="btn btn-secondary" onclick="openNavigation(spot.id)">一键导航</button>
+          <button class="btn btn-ghost" onclick="location.href='./index.html'">返回平台首页</button>
+        </div>
+      </div>
+      <div>
+        <div class="video-box" id="videoBox"></div>
+        <div class="story-text" id="storyText"></div>
+      </div>
+    </section>
+  </main>
+  <script src="./js/config.js"></script>
+  <script src="./js/spots-data.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const id = params.get("id") || "jishixi";
+    const spot = window.SPOTS.find(s => s.id === id) || window.SPOTS[0];
+
+    document.title = spot.name + " - 扫码听故事";
+    document.getElementById("spotName").innerText = spot.name;
+    document.getElementById("spotIntro").innerText = spot.intro + " 地址：" + spot.address;
+    document.getElementById("spotTags").innerHTML = spot.tags.map(t => `<span>${t}</span>`).join("");
+    document.getElementById("storyText").innerText = window.SPOT_STORIES[spot.id] || spot.storyShort;
+
+    const videoBox = document.getElementById("videoBox");
+    videoBox.innerHTML = `<video controls preload="metadata" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('beforeend','<div style=&quot;padding:22px;text-align:center;line-height:1.8&quot;>暂无数字人视频，请将 ${spot.video} 放入 assets/videos/ 文件夹。<br>当前已启用讲解文本和浏览器语音播放。</div>')"><source src="${spot.video}" type="video/mp4"></video>`;
+
+    function playNarration(){
+      if(!("speechSynthesis" in window)){ alert("当前浏览器不支持语音朗读"); return; }
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(window.SPOT_STORIES[spot.id] || spot.storyShort);
+      u.lang = "zh-CN";
+      u.rate = 0.95;
+      window.speechSynthesis.speak(u);
+    }
+
+    function openNavigation(id){
+      const s = window.SPOTS.find(x => x.id === id) || spot;
+      const url = `https://uri.amap.com/marker?position=${s.lng},${s.lat}&name=${encodeURIComponent(s.name)}&src=red-tour-guide&coordinate=gaode&callnative=1`;
+      window.open(url, "_blank");
+    }
+  </script>
+</body>
+</html>

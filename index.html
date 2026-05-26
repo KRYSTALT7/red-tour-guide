@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>红土客韵・数字陆河 AI 智慧导览平台</title>
+  <link rel="stylesheet" href="./css/style.css"/>
+</head>
+<body>
+  <div class="dashboard">
+    <aside class="sidebar">
+      <div class="logo"><div class="logo-mark">陆</div><div><h1>红土客韵<br/>数字陆河</h1><p>AI 智慧文旅导览平台</p></div></div>
+      <nav class="nav">
+        <div class="nav-item active" data-scroll="top"><div class="nav-icon">🏠</div>平台总览</div>
+        <div class="nav-item" onclick="openDigitalHuman()"><div class="nav-icon">🧑‍💻</div>AI 数字人</div>
+        <div class="nav-item" onclick="focusChat()"><div class="nav-icon">🤖</div>AI 问答知识库</div>
+        <div class="nav-item" onclick="focusMap()"><div class="nav-icon">🗺️</div>红色遗址地图</div>
+        <div class="nav-item" onclick="openQR(currentSpot.id)"><div class="nav-icon">📱</div>扫码听故事</div>
+        <div class="nav-item" onclick="openRoutes()"><div class="nav-icon">🧭</div>精品文旅路线</div>
+      </nav>
+      <div class="sidebar-bottom"><h3>项目定位</h3><p>面向红色文化传播、客家文旅导览、研学实践和乡村数字化展示的 AI 智能体平台。</p></div>
+    </aside>
+
+    <main class="main" id="top">
+      <header class="topbar">
+        <div class="title-block">
+          <div class="tag">真实地图 + AI 问答 + 数字人讲解 + 二维码点位</div>
+          <h2>红土客韵・数字陆河</h2>
+          <p>集 AI 数字人讲解、知识库问答、红色遗址地图、扫码听故事于一体的电脑端智慧导览平台。</p>
+        </div>
+        <div class="search">
+          <input id="searchInput" placeholder="搜索：激石溪、三一八、五星祠、扫码听故事"/>
+          <button onclick="quickSearch()">AI 检索</button>
+        </div>
+      </header>
+
+      <section class="stats">
+        <div class="stat-card"><h3>红色/文化点位</h3><strong id="spotCount">0</strong><span>处</span></div>
+        <div class="stat-card"><h3>AI 故事脚本</h3><strong id="storyCount">0</strong><span>条</span></div>
+        <div class="stat-card"><h3>扫码讲解入口</h3><strong id="qrCount">0</strong><span>个</span></div>
+        <div class="stat-card"><h3>精品路线</h3><strong id="routeCount">0</strong><span>条</span></div>
+      </section>
+
+      <section class="content-grid">
+        <div class="panel" id="mapPanel">
+          <div class="panel-title"><h3>红色遗址数字地图</h3><span>真实坐标 / 点位 Marker / 一键导航</span></div>
+          <div id="map">
+            <div class="fallback-map" id="fallbackMap"></div>
+            <div class="floating-card">
+              <h4 id="spotTitle">点位加载中</h4>
+              <p id="spotDesc">正在加载点位数据……</p>
+              <div class="tags" id="spotTags"></div>
+              <div class="btn-row">
+                <button class="btn btn-primary" onclick="openNavigation(currentSpot.id)">一键导航</button>
+                <button class="btn btn-secondary" onclick="openDigitalHuman(currentSpot.id)">AI 讲解</button>
+                <button class="btn btn-ghost" onclick="openQR(currentSpot.id)">二维码</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title"><h3>核心功能模块</h3><span>全部可交互</span></div>
+          <div class="function-list">
+            <div class="function-card" onclick="openDigitalHuman(currentSpot.id)"><div class="function-icon">🧑‍💻</div><div><h4>AI 数字人讲红色故事</h4><p>选择角色、点位、语言，播放视频或浏览器语音讲解。</p></div><div class="status">可用</div></div>
+            <div class="function-card" onclick="focusChat()"><div class="function-icon">🤖</div><div><h4>AI 本地知识库问答</h4><p>优先调用后端 AI，失败时本地知识库兜底。</p></div><div class="status">可用</div></div>
+            <div class="function-card" onclick="openQR(currentSpot.id)"><div class="function-icon">📱</div><div><h4>扫码听故事</h4><p>每个点位生成独立二维码，扫码进入点位详情页。</p></div><div class="status">可用</div></div>
+            <div class="function-card" onclick="openRoutes()"><div class="function-icon">🧭</div><div><h4>精品文旅路线推荐</h4><p>红色研学线、客家文化线、融合路线一键切换。</p></div><div class="status">可用</div></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="right-panel">
+      <section class="ai-human">
+        <div class="human-avatar"></div>
+        <div><h3>AI 数字讲解员</h3><p>支持数字人视频、讲解文本、浏览器语音朗读，可作为现场导览与报告展示材料。</p><button onclick="openDigitalHuman(currentSpot.id)">播放讲解</button></div>
+      </section>
+
+      <section class="chat" id="chatPanel">
+        <h3>AI 问答助手</h3>
+        <div class="chat-window" id="chatWindow"><div class="msg bot">你好，我是陆河红色客家文化 AI 助手。你可以问：激石溪有什么故事？扫码听故事怎么实现？客家文化点位有哪些？</div></div>
+        <div class="chat-input"><input id="questionInput" placeholder="输入问题，例如：五星祠是什么地方？"/><button onclick="sendQuestion()">发送</button></div>
+      </section>
+
+      <section class="tech">
+        <h3>平台技术架构</h3>
+        <div class="tech-flow">
+          <div class="tech-node"><span class="tech-dot"></span>前端展示层：GitHub Pages 静态页面</div>
+          <div class="tech-node"><span class="tech-dot"></span>地图服务层：高德 JS API + 点位 Marker</div>
+          <div class="tech-node"><span class="tech-dot"></span>AI 能力层：后端代理 DeepSeek / 本地知识库兜底</div>
+          <div class="tech-node"><span class="tech-dot"></span>现场交互层：二维码跳转 spot.html?id=点位ID</div>
+          <div class="tech-node"><span class="tech-dot"></span>内容资源层：讲解文本 / 图片 / 数字人视频</div>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <div class="modal-mask" id="modalMask">
+    <div class="modal">
+      <h3 id="modalTitle">功能演示</h3>
+      <div id="modalContent"></div>
+      <button class="close" onclick="closeModal()">关闭</button>
+    </div>
+  </div>
+
+  <script src="./js/config.js"></script>
+  <script src="./js/spots-data.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="./js/app.js"></script>
+  <script src="./js/map.js"></script>
+  <script src="./js/chat.js"></script>
+</body>
+</html>
